@@ -4,7 +4,7 @@
     {
       "chipFamily": "ESP32",
       "parts": [
-        { "path": "ereader.bin", "offset": 0 }
+        { "path": "Firmware/ereader.bin", "offset": 0 }
       ]
     }
   ]
