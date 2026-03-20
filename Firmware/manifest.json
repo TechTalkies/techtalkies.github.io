@@ -3,7 +3,6 @@
   "builds": [
     {
       "chipFamily": "ESP32",
-      "improv": true,
       "parts": [
         { "path": "ereader.bin", "offset": 0 }
       ]
