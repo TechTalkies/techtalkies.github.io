@@ -2,7 +2,7 @@
   "name": "Pocket E-reader",
   "builds": [
     {
-      "chipFamily": "ESP32-S3",
+      "chipFamily": "ESP32S3",
       "parts": [
         { "path": "ereader.bin", "offset": 0 }
       ]
