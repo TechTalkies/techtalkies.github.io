@@ -102,6 +102,29 @@ h1 {
   background: #ddd;
 }
 
+  .header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px; /* remove if your logo is not square */
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #666;
+}
+
 /* install button */
 esp-web-install-button {
   --esp-tools-button-color: #6366f1;
@@ -124,8 +147,13 @@ esp-web-install-button {
 <div class="container">
 <div class="card">
 
-<h1>ESP Flasher</h1>
-<div class="subtitle">Flash firmware directly via USB</div>
+<div class="header">
+  <img src="logo.png" class="logo">
+  <div>
+    <div class="title">Pocket E-Reader</div>
+    <div class="subtitle">Flash firmware directly via USB</div>
+  </div>
+</div>
 
 <!-- Firmware selection -->
 <div class="firmware-row">
@@ -157,7 +185,7 @@ esp-web-install-button {
   </div>
 
   <div class="video" id="fwVideo">
-    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/aDaSp6zaqWM"
       frameborder="0" allowfullscreen></iframe>
   </div>
 
