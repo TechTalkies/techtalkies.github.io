@@ -4,19 +4,19 @@
     {
       "chipFamily": "ESP32-S3",
       "parts": [
-        { "path": "dogesh.bin", "offset": 0 }
+        { "path": "Dogesh.bin", "offset": 0 }
       ]
     },
     {
       "chipFamily": "ESP32S3",
       "parts": [
-        { "path": "dogesh.bin", "offset": 0 }
+        { "path": "Dogesh.bin", "offset": 0 }
       ]
     },
     {
       "chipFamily": "ESP32",
       "parts": [
-        { "path": "dogesh.bin", "offset": 0 }
+        { "path": "Dogesh.bin", "offset": 0 }
       ]
     }
   ]
