@@ -1,5 +1,5 @@
 {
-  "name": "Xiao pet dog",
+  "name": "ESP32 Pet Robot",
   "builds": [
     {
       "chipFamily": "ESP32-S3",
