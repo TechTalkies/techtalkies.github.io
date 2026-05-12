@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Talkies</title>
+    <script src="https://unpkg./@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        @theme {
+            --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+            --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+        }
+        body {
+            font-family: var(--font-sans);
+            background-color: #09090b; /* zinc-950 */
+            color: #f4f4f5; /* zinc-100 */
+        }
+        .selection-indigo {
+            ::selection {
+                background-color: rgba(99, 102, 241, 0.3); /* indigo-500/30 */
+            }
+        }
+    </style>
+</head>
+<body class="selection-indigo">
+    <!-- Background Accents -->
+    <div class="fixed top-0 right-0 w-[500px] h-[500px] bg-indigo-600/5 blur-[120px] -z-10 rounded-full"></div>
+    <div class="fixed bottom-0 left-0 w-[500px] h-[500px] bg-emerald-600/5 blur-[120px] -z-10 rounded-full"></div>
+
+    <!-- Navigation -->
+    <nav class="border-b border-zinc-900 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-indigo-500"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                <span class="font-mono text-sm tracking-tighter font-bold uppercase">Labs.System</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="#" class="text-xs font-medium text-zinc-400 hover:text-white transition-colors">PROJECTS</a>
+                <a href="#" class="text-xs font-medium text-zinc-400 hover:text-white transition-colors">RESOURCES</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-zinc-600 hover:text-white transition-colors cursor-pointer"><path d="m7 11 2-2-2-2"/><path d="M11 19h10"/></svg>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 py-24">
+        <header class="mb-20 text-center md:text-left">
+            <div class="animate-in fade-in slide-in-from-left-5 duration-700">
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tighter mb-4 text-white">
+                    Tech Talkies <span class="text-zinc-700">Explorations</span>
+                </h1>
+                <p class="text-zinc-500 max-w-xl text-lg font-medium">
+                    A curated directory of hardware experiments, firmware tools, and 
+                    embedded interface systems.
+                </p>
+            </div>
+        </header>
+
+        <!-- Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Online Flasher -->
+            <a href="/flash.html" class="relative group bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col h-full hover:border-zinc-700 hover:bg-zinc-900/80 transition-all shadow-xl cursor-pointer overflow-hidden animate-in fade-in zoom-in-95 duration-500">
+                <div class="absolute -inset-px bg-gradient-to-tr from-indigo-500/10 to-emerald-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-100 group-hover:text-white group-hover:bg-zinc-700 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/></svg>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-zinc-600 group-hover:text-white transition-colors"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white tracking-tight">Online Flasher</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-8 flex-grow">
+                        Flash Tech Talkies projects firmwares directly with high-speed Web Serial integration.
+                    </p>
+                </div>
+                <div class="relative z-10 mt-auto pt-6 border-t border-zinc-800/50 flex flex-wrap gap-2">
+                    <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-1 bg-zinc-950 text-zinc-500 border border-zinc-800 rounded-md">Multiple projects</span>
+                    <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-1 bg-zinc-950 text-zinc-500 border border-zinc-800 rounded-md">Cross-platform</span>
+                    <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-1 bg-zinc-950 text-zinc-500 border border-zinc-800 rounded-md">v2.0</span>
+                </div>
+            </a>
+
+            <!-- RSVP OLED -->
+            <a href="/RSVP_OLED/index.html" class="relative group bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col h-full hover:border-zinc-700 hover:bg-zinc-900/80 transition-all shadow-xl cursor-pointer overflow-hidden animate-in fade-in zoom-in-95 delay-75 duration-500">
+                <div class="absolute -inset-px bg-gradient-to-tr from-indigo-500/10 to-emerald-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-100 group-hover:text-white group-hover:bg-zinc-700 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="10" x="2" y="4" rx="2"/><line x1="6" y1="14" x2="6" y2="18"/><line x1="10" y1="14" x2="10" y2="18"/><line x1="14" y1="14" x2="14" y2="18"/><line x1="18" y1="14" x2="18" y2="18"/><path d="M12 2v2"/><path d="M12 18v2"/></svg>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-zinc-600 group-hover:text-white transition-colors"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white tracking-tight">RSVP OLED</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-8 flex-grow">
+                        An RSVP based ereader that displays on an OLED and runs on an ESP32 for ultra-fast reading.
+                    </p>
+                </div>
+                <div class="relative z-10 mt-auto pt-6 border-t border-zinc-800/50 flex flex-wrap gap-2">
+                    <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-1 bg-zinc-950 text-zinc-500 border border-zinc-800 rounded-md">ESP32</span>
+                    <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-1 bg-zinc-950 text-zinc-500 border border-zinc-800 rounded-md">OLED Driver</span>
+                    <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-1 bg-zinc-950 text-zinc-500 border border-zinc-800 rounded-md">C++</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <footer class="mt-20 py-12 border-t border-zinc-900 text-center">
+        <p class="text-zinc-600 text-xs font-mono uppercase tracking-widest">&copy; 2026 Tech Talkies Labs</p>
+    </footer>
+</body>
+</html>
+
