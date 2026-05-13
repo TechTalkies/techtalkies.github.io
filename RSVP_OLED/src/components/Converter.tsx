@@ -6,6 +6,7 @@ import JSZip from 'jszip';
 
 export default function Converter() {
   const [books, setBooks] = useState<Book[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const addCustomBook = (title: string, content: string) => {
     const newBook: Book = { id: Date.now().toString(), title, content };
@@ -16,27 +17,48 @@ export default function Converter() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setIsProcessing(true);
     const zip = new JSZip();
     try {
+      console.log('Loading EPUB zip...');
       const contents = await zip.loadAsync(file);
       let fullText = '';
       
-      const htmlFiles = Object.keys(contents.files).filter(name => name.endsWith('.html') || name.endsWith('.xhtml'));
-      htmlFiles.sort();
+      const contentFiles = Object.keys(contents.files).filter(name => 
+        name.toLowerCase().endsWith('.html') || 
+        name.toLowerCase().endsWith('.xhtml') || 
+        name.toLowerCase().endsWith('.htm')
+      );
+      
+      // Sort files to maintain some semblance of order (many EPUBs follow numeric/section naming)
+      contentFiles.sort();
 
-      for (const fileName of htmlFiles) {
+      console.log(`Found ${contentFiles.length} content files`);
+
+      for (const fileName of contentFiles) {
         const text = await contents.files[fileName].async('text');
         const doc = new DOMParser().parseFromString(text, 'text/html');
+        
+        // Remove script and style tags to avoid garbage text
+        const scripts = doc.querySelectorAll('script, style');
+        scripts.forEach(s => s.remove());
+
         fullText += (doc.body.textContent || '') + '\n';
       }
 
       const cleanText = fullText.replace(/\s+/g, ' ').trim();
       if (cleanText) {
-        addCustomBook(file.name.replace('.epub', ''), cleanText);
+        addCustomBook(file.name.replace(/\.[^/.]+$/, ""), cleanText);
+      } else {
+        alert('Could not extract any readable text from this EPUB.');
       }
     } catch (err) {
       console.error('Failed to parse EPUB:', err);
-      alert('Failed to parse EPUB. Please try a different file.');
+      alert('Failed to parse EPUB. The file might be corrupted or in an unsupported format.');
+    } finally {
+      setIsProcessing(false);
+      // Reset input
+      e.target.value = '';
     }
   };
 
@@ -90,13 +112,22 @@ export default function Converter() {
               EPUB Converter
             </h3>
             <p className="text-sm text-gray-400">Upload an EPUB file to extract its content for speed reading.</p>
-            <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:bg-white/5 transition-all">
+            <label className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:bg-white/5 transition-all relative overflow-hidden ${isProcessing ? 'opacity-50 cursor-wait pointer-events-none' : ''}`}>
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <FileUp className="w-10 h-10 mb-3 text-gray-400" />
-                <p className="text-sm text-gray-400 font-medium">Click to upload EPUB</p>
-                <p className="text-xs text-gray-500 mt-1">.epub files only</p>
+                {isProcessing ? (
+                  <>
+                    <div className="w-10 h-10 mb-3 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+                    <p className="text-sm text-blue-400 font-bold uppercase tracking-widest">Processing Zip...</p>
+                  </>
+                ) : (
+                  <>
+                    <FileUp className="w-10 h-10 mb-3 text-gray-400" />
+                    <p className="text-sm text-gray-400 font-medium">Click to upload EPUB</p>
+                    <p className="text-xs text-gray-500 mt-1">.epub files only</p>
+                  </>
+                )}
               </div>
-              <input type="file" className="hidden" accept=".epub" onChange={handleEpubUpload} />
+              {!isProcessing && <input type="file" className="hidden" accept=".epub" onChange={handleEpubUpload} />}
             </label>
           </div>
 
@@ -105,31 +136,33 @@ export default function Converter() {
             <p className="text-sm text-gray-400">Paste raw text directly to create a custom speed reading file.</p>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Book Title</label>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1 text-gray-500">Book Title</label>
                 <input 
                   id="book-title"
                   type="text" 
                   placeholder="e.g. My Custom Notes"
-                  className="w-full bg-black border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+                  className="w-full bg-black border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all font-mono"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Content</label>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1 text-gray-500">Content</label>
                 <textarea 
                   id="book-content"
                   rows={4}
                   placeholder="Paste your text here..."
-                  className="w-full bg-black border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all resize-none"
+                  className="w-full bg-black border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all resize-none font-mono"
                 ></textarea>
               </div>
               <button 
                 onClick={() => {
-                  const title = (document.getElementById('book-title') as HTMLInputElement).value;
-                  const content = (document.getElementById('book-content') as HTMLTextAreaElement).value;
+                  const titleInput = document.getElementById('book-title') as HTMLInputElement;
+                  const contentInput = document.getElementById('book-content') as HTMLTextAreaElement;
+                  const title = titleInput.value;
+                  const content = contentInput.value;
                   if (title && content) {
                     addCustomBook(title, content);
-                    (document.getElementById('book-title') as HTMLInputElement).value = '';
-                    (document.getElementById('book-content') as HTMLTextAreaElement).value = '';
+                    titleInput.value = '';
+                    contentInput.value = '';
                   } else {
                     alert('Please provide both a title and content.');
                   }
@@ -142,37 +175,61 @@ export default function Converter() {
           </div>
         </div>
 
-        {books.length > 0 && (
-          <div className="mt-12 space-y-4">
-            <h3 className="text-xl font-bold text-white">Your RSVP Files</h3>
-            <div className="overflow-hidden border border-white/10 rounded-xl bg-black/40">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-white/5">
+        <div className="mt-12 space-y-4 border-t border-white/5 pt-12">
+          <div className="flex items-center justify-between">
+            <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+              <Download className="text-blue-400" />
+              Download Ready Files
+            </h3>
+            {books.length > 0 && (
+              <span className="text-[10px] bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                {books.length} Available
+              </span>
+            )}
+          </div>
+          
+          <div className="overflow-hidden border border-white/10 rounded-xl bg-black/40 min-h-[200px] flex flex-col">
+            {books.length > 0 ? (
+              <table className="w-full text-left text-sm border-collapse">
+                <thead className="bg-white/5 border-b border-white/10">
                   <tr className="text-gray-400 uppercase text-[10px] tracking-wider">
-                    <th className="px-6 py-4">Title</th>
-                    <th className="px-6 py-4 text-right">Action</th>
+                    <th className="px-6 py-4 font-bold">File Name</th>
+                    <th className="px-6 py-4 text-right font-bold">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {books.map(book => (
                     <tr key={book.id} className="hover:bg-white/5 transition-colors group">
-                      <td className="px-6 py-4 text-white font-medium">{book.title}</td>
+                      <td className="px-6 py-4 text-white font-medium flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                        {book.title}.rsvp
+                      </td>
                       <td className="px-6 py-4 text-right">
                         <button 
                           onClick={() => downloadRsvpFile(book)}
-                          className="px-4 py-2 bg-blue-600/10 hover:bg-blue-600 text-blue-400 hover:text-white rounded-md transition-all inline-flex items-center gap-2 text-xs font-bold"
+                          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all inline-flex items-center gap-2 text-xs font-bold shadow-lg shadow-blue-900/20 active:scale-95"
                         >
-                          <Download size={14} />
-                          DOWNLOAD .RSVP
+                          <Download size={14} strokeWidth={3} />
+                          DOWNLOAD NOW
                         </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-4 opacity-50">
+                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                  <FileUp className="text-gray-500" size={32} />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-white font-bold">No files generated yet</p>
+                  <p className="text-gray-500 text-xs max-w-[240px]">Import an EPUB or paste text above to create your first .rsvp file.</p>
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       <div className="bg-[#1e1e1e] rounded-2xl p-8 border border-white/10 shadow-xl prose prose-invert max-w-none">
