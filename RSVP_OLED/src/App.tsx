@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import XiaoDevice from './components/XiaoDevice';
+import Converter from './components/Converter';
 
 export default function App() {
   return (
-    <main className="w-full flex items-center justify-center p-4">
-      <XiaoDevice />
+    <main className="w-full min-h-screen bg-black text-white selection:bg-blue-500/30">
+      <Converter />
     </main>
   );
 }
