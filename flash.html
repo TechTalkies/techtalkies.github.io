@@ -102,7 +102,7 @@ h1 {
   background: #ddd;
 }
 
-  .header {
+.header {
   display: flex;
   align-items: center;
   gap: 15px;
@@ -113,6 +113,7 @@ h1 {
   width: 48px;
   height: 48px;
   border-radius: 10px; /* remove if your logo is not square */
+  object-fit: cover;
 }
 
 .title {
@@ -148,7 +149,7 @@ esp-web-install-button {
 <div class="card">
 
 <div class="header">
-  <img src="logo.png" class="logo">
+  <img src="logo.png" class="logo" alt="Logo">
   <div>
     <div class="title">Tech Talkies Flasher</div>
     <div class="subtitle">Flash firmware directly via USB</div>
@@ -162,17 +163,15 @@ esp-web-install-button {
     <div class="fw-desc">Offline reader</div>
   </div>
 
-<div class="fw" onclick="selectFW(1, this)">
+  <div class="fw" onclick="selectFW(1, this)">
     <div class="fw-title">Pet Robot</div>
     <div class="fw-desc">ESP32 based pet</div>
   </div>
 
-<div class="fw" onclick="selectFW(2, this)">
+  <div class="fw" onclick="selectFW(2, this)">
     <div class="fw-title">AI Pendant</div>
     <div class="fw-desc">AI wearable</div>
   </div>
-</div>
-  
 </div>
 
 <!-- INFO PANEL -->
