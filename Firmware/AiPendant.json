@@ -1,0 +1,23 @@
+{
+  "name": "AI pendant",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "Pendant.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32S3",
+      "parts": [
+        { "path": "Pendant.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "Pendant.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
