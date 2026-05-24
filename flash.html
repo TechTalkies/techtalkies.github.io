@@ -162,9 +162,15 @@ esp-web-install-button {
     <div class="fw-desc">Offline reader</div>
   </div>
 
-  <div class="fw" onclick="selectFW(1, this)">
+<div class="fw" onclick="selectFW(1, this)">
     <div class="fw-title">Pet Robot</div>
     <div class="fw-desc">ESP32 based pet</div>
+  </div>
+</div>
+
+<div class="fw" onclick="selectFW(1, this)">
+    <div class="fw-title">AI Pendant</div>
+    <div class="fw-desc">Xiaozhi based wearable</div>
   </div>
 </div>
 
@@ -223,6 +229,17 @@ const firmwareData = [
       "Offline voice recognition",
       "3D printed",
       "Works only on the Xiao ESP32S3 Sense!"
+    ],
+    video: "https://www.youtube.com/embed/QQHyo7KlaQk"
+  },
+  {
+    manifest: "Firmware/AiPendant.json",
+    title: "ESP32 AI Pendant",
+    desc: "A wearable AI device with a mic and camera for interaction",
+    features: [
+      "Conversational AI",
+      "Camera for Visual interaction",
+      "Works through Xiaozhi servers"
     ],
     video: "https://www.youtube.com/embed/QQHyo7KlaQk"
   }
