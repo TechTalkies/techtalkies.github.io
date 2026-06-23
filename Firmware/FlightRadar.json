@@ -1,0 +1,23 @@
+{
+  "name": "Flight Radar",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "flightRadar.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32S3",
+      "parts": [
+        { "path": "flightRadar.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "flightRadar.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
