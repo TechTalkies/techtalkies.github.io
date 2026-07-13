@@ -1,0 +1,23 @@
+{
+  "name": "Flight Radar 7 inch",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "FlightRadar_7inch.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32S3",
+      "parts": [
+        { "path": "FlightRadar_7inch.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "FlightRadar_7inch.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
