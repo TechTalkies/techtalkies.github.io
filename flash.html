@@ -199,6 +199,11 @@ esp-web-install-button {
     <div class="fw-title">Flight Radar</div>
     <div class="fw-desc">Flight Radar</div>
   </div>
+
+  <div class="fw" onclick="selectFW(4, this)">
+    <div class="fw-title">Flight Radar 7 inch</div>
+    <div class="fw-desc">Flight Radar V2</div>
+  </div>
 </div>
 
 <!-- INFO PANEL -->
@@ -283,6 +288,19 @@ const firmwareData = [
       "More details in the details view"
     ],
     video: "https://www.youtube.com/embed/LWyI_kz2pQo",
+    linkText: "Based on micro-radar by AnthonySturdy",
+    link: "https://github.com/AnthonySturdy/micro-radar"
+  },
+  {
+    manifest: "Firmware/FlightRadarV2.json",
+    title: "ESP32 Flight Radar",
+    desc: "A simple flight radar that pulls data from opensky-network.org",
+    features: [
+      "Smooth radar",
+      "Select a flight using the dial",
+      "More details in the details view"
+    ],
+    image: "https://github.com/TechTalkies/YouTube/blob/e4beb036bf86336e5bf8d82303e6c6ed18a0f649/110_Flight_radar_V2_7i/flasher_image.png",
     linkText: "Based on micro-radar by AnthonySturdy",
     link: "https://github.com/AnthonySturdy/micro-radar"
   }
