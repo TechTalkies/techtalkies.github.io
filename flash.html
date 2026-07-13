@@ -102,6 +102,13 @@ h1 {
   background: #ddd;
 }
 
+.video img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -229,6 +236,9 @@ Chrome / Edge required • Flash at your own risk
 </div>
 
 <script>
+// For each project, provide EITHER "image" OR "video" (whichever you have) -
+// you don't need to fill in both. Whichever one is present gets shown.
+// If both happen to be given, image takes priority.
 const firmwareData = [
   {
     manifest: "Firmware/ereader.json",
@@ -297,8 +307,17 @@ function selectFW(index, el) {
     ul.appendChild(li);
   });
 
-  document.getElementById("fwVideo").innerHTML =
-    `<iframe width="100%" height="100%" src="${fw.video}" frameborder="0" allowfullscreen></iframe>`;
+  const videoBox = document.getElementById("fwVideo");
+  if (fw.image && fw.image.trim() !== "") {
+    // Image available for this project - use it
+    videoBox.innerHTML = `<img src="${fw.image}" alt="${fw.title}">`;
+  } else if (fw.video && fw.video.trim() !== "") {
+    // No image - fall back to the video embed
+    videoBox.innerHTML =
+      `<iframe width="100%" height="100%" src="${fw.video}" frameborder="0" allowfullscreen></iframe>`;
+  } else {
+    videoBox.innerHTML = "";
+  }
 
 if (fw.link && fw.linkText)
 {
@@ -314,6 +333,11 @@ else
   linkDiv.innerHTML = "";
 }
 }
+
+// Trigger initial render for the default active card (index 0)
+document.addEventListener("DOMContentLoaded", () => {
+  selectFW(0, document.querySelector(".fw.active"));
+});
 </script>
 
 </body>
