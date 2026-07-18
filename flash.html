@@ -204,6 +204,11 @@ esp-web-install-button {
     <div class="fw-title">Flight Radar 7 inch</div>
     <div class="fw-desc">Flight Radar V2</div>
   </div>
+
+    <div class="fw" onclick="selectFW(5, this)">
+    <div class="fw-title">Voice Studio</div>
+    <div class="fw-desc">ESP32 Voice control without coding</div>
+  </div>
 </div>
 
 <!-- INFO PANEL -->
@@ -302,6 +307,19 @@ const firmwareData = [
     ],
     image: "https://raw.githubusercontent.com/TechTalkies/YouTube/e4beb036bf86336e5bf8d82303e6c6ed18a0f649/110_Flight_radar_V2_7i/flasher_image.png",
     linkText: "Firmware under development and can be buggy",
+    link: ""
+  },
+    {
+    manifest: "Firmware/VoiceStudio.json",
+    title: "TT Voice Studio",
+    desc: "Create custom offline voice commands for your ESP32-S3 without writing a single line of code. Configure commands from a web browser and control GPIOs, LEDs, servos, buzzers, and more.",
+    features: [
+      "100% offline speech recognition",
+      "Create custom voice commands",
+      "Web-based configuration"
+    ],
+    image: "https://raw.githubusercontent.com/TechTalkies/YouTube/refs/heads/main/111_TT_Voice_Studio/flasher_thumb.png",
+    linkText: "Beta version",
     link: ""
   }
 ];
