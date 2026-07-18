@@ -1,0 +1,23 @@
+{
+  "name": "TT Voice Studio",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "VoiceStudio.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32S3",
+      "parts": [
+        { "path": "VoiceStudio.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "VoiceStudio.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
