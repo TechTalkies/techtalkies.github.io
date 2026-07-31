@@ -254,6 +254,31 @@ h1 {
   color: #666;
 }
 
+.support-banner-wrap {
+  margin-bottom: 20px;
+}
+ 
+.support-banner-link {
+  display: block;
+  line-height: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+ 
+.support-banner-link:hover {
+  opacity: 0.92;
+}
+ 
+.support-banner-link img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 980 / 198;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
 /* install button */
 esp-web-install-button {
   --esp-tools-button-color: #6366f1;
@@ -342,6 +367,13 @@ esp-web-install-button {
     <iframe width="100%" height="100%" src="https://www.youtube.com/embed/8fOCvRHi8e8"
       frameborder="0" allowfullscreen></iframe>
   </div>
+</div>
+
+<!-- SUPPORT BANNER -->
+<div class="support-banner-wrap">
+  <a class="support-banner-link" href="https://ko-fi.com/techtalkies" target="_blank" rel="noopener">
+    <img src="support_me.png" alt="Support Tech Talkies on Ko-fi" width="980" height="198">
+  </a>
 </div>
 
 <!-- Install -->
