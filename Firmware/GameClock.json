@@ -1,0 +1,23 @@
+{
+  "name": "Retro Game Clock",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "gameclock.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32S3",
+      "parts": [
+        { "path": "gameclock.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "gameclock.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
