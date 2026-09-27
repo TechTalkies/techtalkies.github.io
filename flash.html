@@ -1,631 +1,650 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Tech Talkies ESP Flasher</title>
+  <meta charset="UTF-8">
+  <title>Tech Talkies ESP Flasher</title>
 
-<script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
 
-<style>
-body {
-  margin: 0;
-  font-family: "Segoe UI", Roboto, sans-serif;
-  background: linear-gradient(135deg, #eef2ff, #f8fafc);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #eef2ff, #f8fafc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-.container {
-  width: 900px;
-}
+    .container {
+      width: 900px;
+    }
 
-.card {
-  background: white;
-  border-radius: 18px;
-  padding: 30px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.08);
-}
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+    }
 
-h1 {
-  margin: 0;
-  font-size: 28px;
-}
+    h1 {
+      margin: 0;
+      font-size: 28px;
+    }
 
-.subtitle {
-  color: #666;
-  margin-bottom: 20px;
-}
+    .subtitle {
+      color: #666;
+      margin-bottom: 20px;
+    }
 
-/* firmware dropdown */
-.fw-picker {
-  position: relative;
-  margin-bottom: 20px;
-}
+    /* firmware dropdown */
+    .fw-picker {
+      position: relative;
+      margin-bottom: 20px;
+    }
 
-.fw-picker-label {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #888;
-  margin-bottom: 8px;
-}
+    .fw-picker-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 8px;
+    }
 
-.fw-select-btn {
-  width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  border: 2px solid #eee;
-  background: white;
-  border-radius: 12px;
-  padding: 14px 16px;
-  cursor: pointer;
-  text-align: left;
-  transition: border-color 0.15s ease;
-}
+    .fw-select-btn {
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 2px solid #eee;
+      background: white;
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s ease;
+    }
 
-.fw-select-btn:hover {
-  border-color: #c7cbf5;
-}
+    .fw-select-btn:hover {
+      border-color: #c7cbf5;
+    }
 
-.fw-select-btn.open {
-  border-color: #6366f1;
-  border-radius: 12px 12px 0 0;
-}
+    .fw-select-btn.open {
+      border-color: #6366f1;
+      border-radius: 12px 12px 0 0;
+    }
 
-.fw-select-btn-left {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+    .fw-select-btn-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
 
-.fw-select-btn .fw-title {
-  font-weight: 600;
-  font-size: 15px;
-}
+    .fw-select-btn .fw-title {
+      font-weight: 600;
+      font-size: 15px;
+    }
 
-.fw-select-btn .fw-desc {
-  font-size: 12px;
-  color: #888;
-}
+    .fw-select-btn .fw-desc {
+      font-size: 12px;
+      color: #888;
+    }
 
-.fw-chevron {
-  flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-  color: #6366f1;
-  transition: transform 0.15s ease;
-}
+    .fw-chevron {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      color: #6366f1;
+      transition: transform 0.15s ease;
+    }
 
-.fw-chevron.open {
-  transform: rotate(180deg);
-}
+    .fw-chevron.open {
+      transform: rotate(180deg);
+    }
 
-.fw-list {
-  position: absolute;
-  z-index: 20;
-  top: 100%;
-  left: 0;
-  right: 0;
-  max-height: 280px;
-  overflow-y: auto;
-  background: white;
-  border: 2px solid #6366f1;
-  border-top: none;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 16px 32px rgba(0,0,0,0.12);
-  display: none;
-}
+    .fw-list {
+      position: absolute;
+      z-index: 20;
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 280px;
+      overflow-y: auto;
+      background: white;
+      border: 2px solid #6366f1;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+      display: none;
+    }
 
-.fw-list.open {
-  display: block;
-}
+    .fw-list.open {
+      display: block;
+    }
 
-.fw-search-wrap {
-  position: sticky;
-  top: 0;
-  background: white;
-  padding: 8px;
-  border-bottom: 1px solid #f1f1f5;
-}
+    .fw-search-wrap {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 8px;
+      border-bottom: 1px solid #f1f1f5;
+    }
 
-.fw-search-input {
-  width: 100%;
-  box-sizing: border-box;
-  border: 1.5px solid #eee;
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 13px;
-  font-family: inherit;
-  outline: none;
-}
+    .fw-search-input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1.5px solid #eee;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+    }
 
-.fw-search-input:focus {
-  border-color: #6366f1;
-}
+    .fw-search-input:focus {
+      border-color: #6366f1;
+    }
 
-.fw-option {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 12px 16px;
-  cursor: pointer;
-  border-top: 1px solid #f1f1f5;
-}
+    .fw-option {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 12px 16px;
+      cursor: pointer;
+      border-top: 1px solid #f1f1f5;
+    }
 
-.fw-option:first-child {
-  border-top: none;
-}
+    .fw-option:first-child {
+      border-top: none;
+    }
 
-.fw-no-results {
-  padding: 16px;
-  font-size: 13px;
-  color: #999;
-  text-align: center;
-}
+    .fw-no-results {
+      padding: 16px;
+      font-size: 13px;
+      color: #999;
+      text-align: center;
+    }
 
-.fw-option:hover {
-  background: #f7f7fc;
-}
+    .fw-option:hover {
+      background: #f7f7fc;
+    }
 
-.fw-option.selected {
-  background: #eef2ff;
-}
+    .fw-option.selected {
+      background: #eef2ff;
+    }
 
-.fw-option .fw-title {
-  font-weight: 600;
-  font-size: 14px;
-}
+    .fw-option .fw-title {
+      font-weight: 600;
+      font-size: 14px;
+    }
 
-.fw-option .fw-desc {
-  font-size: 12px;
-  color: #888;
-}
+    .fw-option .fw-desc {
+      font-size: 12px;
+      color: #888;
+    }
 
-/* info panel */
-.info-panel {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 25px;
-}
+    /* info panel */
+    .info-panel {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
 
-.info-text {
-  flex: 1;
-}
+    .info-text {
+      flex: 1;
+    }
 
-.info-text h2 {
-  margin: 0 0 10px 0;
-}
+    .info-text h2 {
+      margin: 0 0 10px 0;
+    }
 
-.info-text p {
-  font-size: 14px;
-  color: #444;
-  line-height: 1.5;
-}
+    .info-text p {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.5;
+    }
 
-.info-text ul {
-  font-size: 13px;
-  color: #444;
-  padding-left: 18px;
-}
+    .info-text ul {
+      font-size: 13px;
+      color: #444;
+      padding-left: 18px;
+    }
 
-.video {
-  width: 300px;
-  height: 170px;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #ddd;
-  flex-shrink: 0;
-}
+    .video {
+      width: 300px;
+      height: 170px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #ddd;
+      flex-shrink: 0;
+    }
 
-.video img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
+    .video img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
 
-.header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
-}
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
 
-.logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px; /* remove if your logo is not square */
-  object-fit: cover;
-}
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      /* remove if your logo is not square */
+      object-fit: cover;
+    }
 
-.title {
-  font-size: 22px;
-  font-weight: 600;
-}
+    .title {
+      font-size: 22px;
+      font-weight: 600;
+    }
 
-.subtitle {
-  font-size: 13px;
-  color: #666;
-}
+    .subtitle {
+      font-size: 13px;
+      color: #666;
+    }
 
-.support-banner-wrap {
-  margin-bottom: 20px;
-}
- 
-.support-banner-link {
-  display: block;
-  width: 100%;
-  max-width: 150px;
-  line-height: 0;
-  border-radius: 10px;
-  overflow: hidden;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
- 
-.support-banner-link:hover {
-  opacity: 0.92;
-}
- 
-.support-banner-link img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 980 / 198;
-  object-fit: cover;
-  border-radius: 10px;
-}
+    .support-banner-wrap {
+      margin-bottom: 20px;
+    }
 
-/* install button */
-esp-web-install-button {
-  --esp-tools-button-color: #6366f1;
-  --esp-tools-button-text-color: #fff;
-  --esp-tools-button-border-radius: 10px;
-  --esp-tools-button-padding: 12px 18px;
-  font-size: 15px;
-}
+    .support-banner-link {
+      display: block;
+      width: 100%;
+      max-width: 150px;
+      line-height: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
 
-.footer {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #888;
-}
+    .support-banner-link:hover {
+      opacity: 0.92;
+    }
 
-.link-note {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #999;
-}
+    .support-banner-link img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 980 / 198;
+      object-fit: cover;
+      border-radius: 10px;
+    }
 
-.link-note a {
-  color: #999;
-  text-decoration: none;
-}
+    /* install button */
+    esp-web-install-button {
+      --esp-tools-button-color: #6366f1;
+      --esp-tools-button-text-color: #fff;
+      --esp-tools-button-border-radius: 10px;
+      --esp-tools-button-padding: 12px 18px;
+      font-size: 15px;
+    }
 
-.link-note a:hover {
-  color: #666;
-}
-</style>
+    .footer {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #888;
+    }
+
+    .link-note {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .link-note a {
+      color: #999;
+      text-decoration: none;
+    }
+
+    .link-note a:hover {
+      color: #666;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
-<div class="card">
+  <div class="container">
+    <div class="card">
 
-<div class="header">
-  <img src="logo.png" class="logo" alt="Logo">
-  <div>
-    <div class="title">Tech Talkies Flasher</div>
-    <div class="subtitle">Flash firmware directly via USB</div>
-  </div>
-</div>
+      <div class="header">
+        <img src="logo.png" class="logo" alt="Logo">
+        <div>
+          <div class="title">Tech Talkies Flasher</div>
+          <div class="subtitle">Flash firmware directly via USB</div>
+        </div>
+      </div>
 
-<!-- Firmware selection -->
-<div class="fw-picker">
-  <div class="fw-picker-label">Select firmware</div>
+      <!-- Firmware selection -->
+      <div class="fw-picker">
+        <div class="fw-picker-label">Select firmware</div>
 
-  <button type="button" class="fw-select-btn" id="fwSelectBtn" onclick="toggleFwList()">
-    <div class="fw-select-btn-left">
-      <div class="fw-title" id="fwSelectTitle">Pocket E-Reader</div>
-      <div class="fw-desc" id="fwSelectDesc">Offline reader</div>
+        <button type="button" class="fw-select-btn" id="fwSelectBtn" onclick="toggleFwList()">
+          <div class="fw-select-btn-left">
+            <div class="fw-title" id="fwSelectTitle">Pocket E-Reader</div>
+            <div class="fw-desc" id="fwSelectDesc">Offline reader</div>
+          </div>
+          <svg class="fw-chevron" id="fwChevron" viewBox="0 0 20 20" fill="none">
+            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        <div class="fw-list" id="fwList">
+          <div class="fw-search-wrap">
+            <input type="text" class="fw-search-input" id="fwSearchInput" placeholder="Search firmware..."
+              oninput="filterList(this.value)">
+          </div>
+          <div id="fwOptions"></div>
+        </div>
+      </div>
+
+      <!-- INFO PANEL -->
+      <div class="info-panel">
+
+        <div class="info-text">
+          <h2 id="fwTitle">Pocket E-Reader</h2>
+          <p id="fwDesc">
+            A minimal offline e-paper reader with page memory, WiFi upload, and long battery life.
+          </p>
+
+          <ul id="fwFeatures">
+            <li>Upload books via WiFi</li>
+            <li>Resume last page</li>
+            <li>Ultra low power</li>
+          </ul>
+          <div id="fwLink" style="margin-top:10px;"></div>
+        </div>
+
+        <div class="video" id="fwVideo">
+          <iframe width="100%" height="100%" src="https://www.youtube.com/embed/8fOCvRHi8e8" frameborder="0"
+            allowfullscreen></iframe>
+        </div>
+      </div>
+
+      <!-- SUPPORT BANNER -->
+      <div class="support-banner-wrap">
+        <a class="support-banner-link" href="https://ko-fi.com/techtalkies" target="_blank" rel="noopener">
+          <img src="support_me.png" alt="Support Tech Talkies on Ko-fi" width="980" height="198">
+        </a>
+      </div>
+
+      <!-- Install -->
+      <esp-web-install-button id="installBtn" manifest="Firmware/ereader.json">
+      </esp-web-install-button>
+
+      <div class="footer">
+        Chrome / Edge required • Flash at your own risk
+      </div>
+
     </div>
-    <svg class="fw-chevron" id="fwChevron" viewBox="0 0 20 20" fill="none">
-      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </button>
-
-  <div class="fw-list" id="fwList">
-    <div class="fw-search-wrap">
-      <input type="text" class="fw-search-input" id="fwSearchInput" placeholder="Search firmware..." oninput="filterList(this.value)">
-    </div>
-    <div id="fwOptions"></div>
-  </div>
-</div>
-
-<!-- INFO PANEL -->
-<div class="info-panel">
-
-  <div class="info-text">
-    <h2 id="fwTitle">Pocket E-Reader</h2>
-    <p id="fwDesc">
-      A minimal offline e-paper reader with page memory, WiFi upload, and long battery life.
-    </p>
-
-    <ul id="fwFeatures">
-      <li>Upload books via WiFi</li>
-      <li>Resume last page</li>
-      <li>Ultra low power</li>
-    </ul>
-    <div id="fwLink" style="margin-top:10px;"></div>
   </div>
 
-  <div class="video" id="fwVideo">
-    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/8fOCvRHi8e8"
-      frameborder="0" allowfullscreen></iframe>
-  </div>
-</div>
+  <script>
+    const firmwareData = [
+      {
+        manifest: "Firmware/ereader.json",
+        title: "Pocket E-Reader",
+        shortDesc: "Offline reader",
+        desc: "A minimal offline e-paper reader with page memory and WiFi upload.",
+        features: [
+          "Upload books via WiFi",
+          "Resume last page",
+          "Battery optimized"
+        ],
+        video: "https://www.youtube.com/embed/8fOCvRHi8e8"
+      },
+      {
+        manifest: "Firmware/Dogesh.json",
+        title: "Pet Robot",
+        shortDesc: "ESP32 based pet",
+        desc: "A 4 legged pet robot with offline voice recognition.",
+        features: [
+          "Offline voice recognition",
+          "3D printed",
+          "Works only on the Xiao ESP32S3 Sense!"
+        ],
+        video: "https://www.youtube.com/embed/QQHyo7KlaQk"
+      },
+      {
+        manifest: "Firmware/AiPendant.json",
+        title: "AI Pendant",
+        shortDesc: "AI wearable",
+        desc: "A wearable AI device with a mic and camera for interaction",
+        features: [
+          "Conversational AI",
+          "Camera for Visual interaction",
+          "Works through Xiaozhi servers"
+        ],
+        video: "https://www.youtube.com/embed/LWyI_kz2pQo"
+      },
+      {
+        manifest: "Firmware/FlightRadar.json",
+        title: "Flight Radar",
+        shortDesc: "Flight Radar",
+        desc: "A simple flight radar that pulls data from opensky-network.org. Build using simple components and a 3D printed case.",
+        features: [
+          "Smooth radar",
+          "Select a flight using the dial",
+          "More details in the details view"
+        ],
+        video: "https://www.youtube.com/embed/KuVckV0wF9w",
+        linkText: "Based on micro-radar by AnthonySturdy",
+        link: "https://github.com/AnthonySturdy/micro-radar"
+      },
+      {
+        manifest: "Firmware/FlightRadarV2.json",
+        title: "Flight Radar 7 inch",
+        shortDesc: "Flight Radar V2",
+        desc: "A simple flight radar that pulls data from opensky-network.org. Built on a 7 inch touch screen",
+        features: [
+          "Smooth radar",
+          "Touch screen controls",
+          "Intuitive UI"
+        ],
+        video: "https://www.youtube.com/embed/_Vu7CyQgKxw",
+        linkText: "Firmware under development and can be buggy",
+        link: ""
+      },
+      {
+        manifest: "Firmware/VoiceStudio.json",
+        title: "Voice Studio",
+        shortDesc: "ESP32 Voice control without coding",
+        desc: "Create custom offline voice commands for your ESP32-S3 without writing a single line of code. Configure commands from a web browser and control GPIOs, LEDs, servos, buzzers, and more.",
+        features: [
+          "100% offline speech recognition",
+          "Create custom voice commands",
+          "Web-based configuration"
+        ],
+        video: "https://www.youtube.com/embed/GQI5NGP52hI",
+        linkText: "Beta version",
+        link: ""
+      },
+      {
+        manifest: "Firmware/GameClock.json",
+        title: "Retro Game Clock",
+        shortDesc: "A mini clock with retro game themes",
+        desc: "Has a touch button to switch between different game themes. Each theme has its own unique clock design and animations.",
+        features: [
+          "Retro game-inspired animations",
+          "Wi-Fi time synchronization",
+          "Touch button to switch themes"
+        ],
+        video: "https://www.youtube.com/embed/9sE63-aa-pQ",
+        linkText: "Original project by Keralots",
+        link: "https://github.com/Keralots/SmallOLED-PCMonitor"
+      },
+      {
+        manifest: "Firmware/Xiaozhi_round.json",
+        title: "Xiaozhi Round Face",
+        shortDesc: "AI chatbot with an animated face and realtime conversation",
+        desc: "Superfast conversational AI chatbot with an animated face. Works through Xiaozhi servers and requires a stable internet connection.",
+        features: [
+          "Fluid face animations",
+          "Free to use AI service",
+          "Opensource and customizable"
+        ],
+        video: "https://www.youtube.com/embed/0GeJkjKwjbI",
+        linkText: "Original Xiaozhi repository",
+        link: "https://github.com/78/xiaozhi-esp32/tree/main"
+      },
+      {
+        manifest: "Firmware/IRL_ColorPicker.json",
+        title: "IRL Color Picker",
+        shortDesc: "A real life color picker",
+        desc: "A compact device that picks colors from the real world and stores them for easy access.",
+        features: [
+          "Works only on: Xiao ESP32-S3, TCS34725 color sensor & 1.47 inch LCD display",
+          "Prints the color code directly to PC via USB",
+          "Store up to 50 colors in memory"
+        ],
+        image: "thumbnail.png",
+        linkText: "Code if you want to build your own color picker",
+        link: "https://github.com/78/xiaozhi-esp32/tree/main"
+      }
+    ];
 
-<!-- SUPPORT BANNER -->
-<div class="support-banner-wrap">
-  <a class="support-banner-link" href="https://ko-fi.com/techtalkies" target="_blank" rel="noopener">
-    <img src="support_me.png" alt="Support Tech Talkies on Ko-fi" width="980" height="198">
-  </a>
-</div>
+    let activeIndex = 0;
+    let listOpen = false;
 
-<!-- Install -->
-<esp-web-install-button id="installBtn" manifest="Firmware/ereader.json">
-</esp-web-install-button>
+    const fwListEl = document.getElementById("fwList");
+    const fwOptionsEl = document.getElementById("fwOptions");
+    const fwSearchInput = document.getElementById("fwSearchInput");
+    const fwSelectBtn = document.getElementById("fwSelectBtn");
+    const fwChevron = document.getElementById("fwChevron");
 
-<div class="footer">
-Chrome / Edge required • Flash at your own risk
-</div>
+    // entries carry their original index so filtering never disturbs selection
+    function allEntries() {
+      return firmwareData.map((fw, i) => ({ fw, i }));
+    }
 
-</div>
-</div>
+    function buildList(entries) {
+      const items = entries || allEntries();
+      fwOptionsEl.innerHTML = "";
 
-<script>
-const firmwareData = [
-  {
-    manifest: "Firmware/ereader.json",
-    title: "Pocket E-Reader",
-    shortDesc: "Offline reader",
-    desc: "A minimal offline e-paper reader with page memory and WiFi upload.",
-    features: [
-      "Upload books via WiFi",
-      "Resume last page",
-      "Battery optimized"
-    ],
-    video: "https://www.youtube.com/embed/8fOCvRHi8e8"
-  },
-  {
-    manifest: "Firmware/Dogesh.json",
-    title: "Pet Robot",
-    shortDesc: "ESP32 based pet",
-    desc: "A 4 legged pet robot with offline voice recognition.",
-    features: [
-      "Offline voice recognition",
-      "3D printed",
-      "Works only on the Xiao ESP32S3 Sense!"
-    ],
-    video: "https://www.youtube.com/embed/QQHyo7KlaQk"
-  },
-  {
-    manifest: "Firmware/AiPendant.json",
-    title: "AI Pendant",
-    shortDesc: "AI wearable",
-    desc: "A wearable AI device with a mic and camera for interaction",
-    features: [
-      "Conversational AI",
-      "Camera for Visual interaction",
-      "Works through Xiaozhi servers"
-    ],
-    video: "https://www.youtube.com/embed/LWyI_kz2pQo"
-  },
-  {
-    manifest: "Firmware/FlightRadar.json",
-    title: "Flight Radar",
-    shortDesc: "Flight Radar",
-    desc: "A simple flight radar that pulls data from opensky-network.org. Build using simple components and a 3D printed case.",
-    features: [
-      "Smooth radar",
-      "Select a flight using the dial",
-      "More details in the details view"
-    ],
-    video: "https://www.youtube.com/embed/KuVckV0wF9w",
-    linkText: "Based on micro-radar by AnthonySturdy",
-    link: "https://github.com/AnthonySturdy/micro-radar"
-  },
-  {
-    manifest: "Firmware/FlightRadarV2.json",
-    title: "Flight Radar 7 inch",
-    shortDesc: "Flight Radar V2",
-    desc: "A simple flight radar that pulls data from opensky-network.org. Built on a 7 inch touch screen",
-    features: [
-      "Smooth radar",
-      "Touch screen controls",
-      "Intuitive UI"
-    ],
-    video: "https://www.youtube.com/embed/_Vu7CyQgKxw",
-    linkText: "Firmware under development and can be buggy",
-    link: ""
-  },
-  {
-    manifest: "Firmware/VoiceStudio.json",
-    title: "Voice Studio",
-    shortDesc: "ESP32 Voice control without coding",
-    desc: "Create custom offline voice commands for your ESP32-S3 without writing a single line of code. Configure commands from a web browser and control GPIOs, LEDs, servos, buzzers, and more.",
-    features: [
-      "100% offline speech recognition",
-      "Create custom voice commands",
-      "Web-based configuration"
-    ],
-     video: "https://www.youtube.com/embed/GQI5NGP52hI",
-    linkText: "Beta version",
-    link: ""
-  },
-  {
-    manifest: "Firmware/GameClock.json",
-    title: "Retro Game Clock",
-    shortDesc: "A mini clock with retro game themes",
-    desc: "Has a touch button to switch between different game themes. Each theme has its own unique clock design and animations.",
-    features: [
-    "Retro game-inspired animations",
-    "Wi-Fi time synchronization",
-    "Touch button to switch themes"
-    ],
-    video: "https://www.youtube.com/embed/9sE63-aa-pQ",
-    linkText: "Original project by Keralots",
-    link: "https://github.com/Keralots/SmallOLED-PCMonitor"
-  },
-  {
-    manifest: "Firmware/Xiaozhi_round.json",
-    title: "Xiaozhi Round Face",
-    shortDesc: "AI chatbot with an animated face and realtime conversation",
-    desc: "Superfast conversational AI chatbot with an animated face. Works through Xiaozhi servers and requires a stable internet connection.",
-    features: [
-      "Fluid face animations",
-      "Free to use AI service",
-      "Opensource and customizable"
-    ],
-    video: "https://www.youtube.com/embed/0GeJkjKwjbI",
-    linkText: "Original Xiaozhi repository",
-    link: "https://github.com/78/xiaozhi-esp32/tree/main"
-  }
-];
+      if (items.length === 0) {
+        fwOptionsEl.innerHTML = `<div class="fw-no-results">No firmware found</div>`;
+        return;
+      }
 
-let activeIndex = 0;
-let listOpen = false;
+      items.forEach(({ fw, i }) => {
+        const opt = document.createElement("div");
+        opt.className = "fw-option" + (i === activeIndex ? " selected" : "");
+        opt.innerHTML = `<div class="fw-title">${fw.title}</div><div class="fw-desc">${fw.shortDesc}</div>`;
+        opt.onclick = (e) => {
+          e.stopPropagation();
+          selectFW(i);
+          closeFwList();
+        };
+        fwOptionsEl.appendChild(opt);
+      });
+    }
 
-const fwListEl = document.getElementById("fwList");
-const fwOptionsEl = document.getElementById("fwOptions");
-const fwSearchInput = document.getElementById("fwSearchInput");
-const fwSelectBtn = document.getElementById("fwSelectBtn");
-const fwChevron = document.getElementById("fwChevron");
+    function filterList(query) {
+      const q = query.trim().toLowerCase();
+      if (q === "") {
+        buildList();
+        return;
+      }
+      const filtered = allEntries().filter(({ fw }) =>
+        fw.title.toLowerCase().includes(q) ||
+        fw.shortDesc.toLowerCase().includes(q) ||
+        fw.desc.toLowerCase().includes(q)
+      );
+      buildList(filtered);
+    }
 
-// entries carry their original index so filtering never disturbs selection
-function allEntries() {
-  return firmwareData.map((fw, i) => ({ fw, i }));
-}
+    function toggleFwList() {
+      listOpen ? closeFwList() : openFwList();
+    }
 
-function buildList(entries) {
-  const items = entries || allEntries();
-  fwOptionsEl.innerHTML = "";
+    function openFwList() {
+      listOpen = true;
+      fwListEl.classList.add("open");
+      fwSelectBtn.classList.add("open");
+      fwChevron.classList.add("open");
+      fwSearchInput.value = "";
+      buildList();
+      fwSearchInput.focus();
+    }
 
-  if (items.length === 0) {
-    fwOptionsEl.innerHTML = `<div class="fw-no-results">No firmware found</div>`;
-    return;
-  }
+    function closeFwList() {
+      listOpen = false;
+      fwListEl.classList.remove("open");
+      fwSelectBtn.classList.remove("open");
+      fwChevron.classList.remove("open");
+      fwSearchInput.value = "";
+    }
 
-  items.forEach(({ fw, i }) => {
-    const opt = document.createElement("div");
-    opt.className = "fw-option" + (i === activeIndex ? " selected" : "");
-    opt.innerHTML = `<div class="fw-title">${fw.title}</div><div class="fw-desc">${fw.shortDesc}</div>`;
-    opt.onclick = (e) => {
-      e.stopPropagation();
-      selectFW(i);
-      closeFwList();
-    };
-    fwOptionsEl.appendChild(opt);
-  });
-}
+    document.addEventListener("click", (e) => {
+      if (listOpen && !e.target.closest(".fw-picker")) {
+        closeFwList();
+      }
+    });
 
-function filterList(query) {
-  const q = query.trim().toLowerCase();
-  if (q === "") {
-    buildList();
-    return;
-  }
-  const filtered = allEntries().filter(({ fw }) =>
-    fw.title.toLowerCase().includes(q) ||
-    fw.shortDesc.toLowerCase().includes(q) ||
-    fw.desc.toLowerCase().includes(q)
-  );
-  buildList(filtered);
-}
+    function selectFW(index) {
+      activeIndex = index;
+      const fw = firmwareData[index];
+      const linkDiv = document.getElementById("fwLink");
 
-function toggleFwList() {
-  listOpen ? closeFwList() : openFwList();
-}
+      document.getElementById("installBtn").setAttribute("manifest", fw.manifest);
+      document.getElementById("fwSelectTitle").innerText = fw.title;
+      document.getElementById("fwSelectDesc").innerText = fw.shortDesc;
+      document.getElementById("fwTitle").innerText = fw.title;
+      document.getElementById("fwDesc").innerText = fw.desc;
 
-function openFwList() {
-  listOpen = true;
-  fwListEl.classList.add("open");
-  fwSelectBtn.classList.add("open");
-  fwChevron.classList.add("open");
-  fwSearchInput.value = "";
-  buildList();
-  fwSearchInput.focus();
-}
+      const ul = document.getElementById("fwFeatures");
+      ul.innerHTML = "";
+      fw.features.forEach(f => {
+        const li = document.createElement("li");
+        li.innerText = f;
+        ul.appendChild(li);
+      });
 
-function closeFwList() {
-  listOpen = false;
-  fwListEl.classList.remove("open");
-  fwSelectBtn.classList.remove("open");
-  fwChevron.classList.remove("open");
-  fwSearchInput.value = "";
-}
+      const videoBox = document.getElementById("fwVideo");
+      if (fw.image && fw.image.trim() !== "") {
+        // Image available for this project - use it
+        videoBox.innerHTML = `<img src="${fw.image}" alt="${fw.title}">`;
+      } else if (fw.video && fw.video.trim() !== "") {
+        // No image - fall back to the video embed
+        videoBox.innerHTML =
+          `<iframe width="100%" height="100%" src="${fw.video}" frameborder="0" allowfullscreen></iframe>`;
+      } else {
+        videoBox.innerHTML = "";
+      }
 
-document.addEventListener("click", (e) => {
-  if (listOpen && !e.target.closest(".fw-picker")) {
-    closeFwList();
-  }
-});
-
-function selectFW(index) {
-  activeIndex = index;
-  const fw = firmwareData[index];
-  const linkDiv = document.getElementById("fwLink");
-
-  document.getElementById("installBtn").setAttribute("manifest", fw.manifest);
-  document.getElementById("fwSelectTitle").innerText = fw.title;
-  document.getElementById("fwSelectDesc").innerText = fw.shortDesc;
-  document.getElementById("fwTitle").innerText = fw.title;
-  document.getElementById("fwDesc").innerText = fw.desc;
-
-  const ul = document.getElementById("fwFeatures");
-  ul.innerHTML = "";
-  fw.features.forEach(f => {
-    const li = document.createElement("li");
-    li.innerText = f;
-    ul.appendChild(li);
-  });
-
-  const videoBox = document.getElementById("fwVideo");
-  if (fw.image && fw.image.trim() !== "") {
-    // Image available for this project - use it
-    videoBox.innerHTML = `<img src="${fw.image}" alt="${fw.title}">`;
-  } else if (fw.video && fw.video.trim() !== "") {
-    // No image - fall back to the video embed
-    videoBox.innerHTML =
-      `<iframe width="100%" height="100%" src="${fw.video}" frameborder="0" allowfullscreen></iframe>`;
-  } else {
-    videoBox.innerHTML = "";
-  }
-
-  if (fw.link && fw.linkText) {
-    linkDiv.innerHTML =
-      `<div class="link-note">
+      if (fw.link && fw.linkText) {
+        linkDiv.innerHTML =
+          `<div class="link-note">
         <a href="${fw.link}" target="_blank">
           ${fw.linkText}
         </a>
       </div>`;
-  } else {
-    linkDiv.innerHTML = "";
-  }
+      } else {
+        linkDiv.innerHTML = "";
+      }
 
-  buildList();
-}
+      buildList();
+    }
 
-// Initial render
-buildList();
-selectFW(0);
-</script>
+    // Initial render
+    buildList();
+    selectFW(0);
+  </script>
 
 </body>
+
 </html>

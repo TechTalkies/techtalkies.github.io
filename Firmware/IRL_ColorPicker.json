@@ -1,0 +1,23 @@
+{
+  "name": "Real Life Color Picker",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "IRL_ColorPicker.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32S3",
+      "parts": [
+        { "path": "IRL_ColorPicker.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "IRL_ColorPicker.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
