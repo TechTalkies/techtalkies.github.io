@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>XIAO ePaper Studio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --primary: #000000;
+            --primary-hover: #333333;
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --border-radius: 16px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            /* Changed from center to allow scrolling */
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            overscroll-behavior-y: contain;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 700px;
+            /* Unlocked from 400px */
+            box-sizing: border-box;
+            margin: auto;
+            /* Centers when smaller than viewport */
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        p.subtitle {
+            margin: 4px 0 12px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        /* Hardware Settings Bar */
+        .hardware-settings {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .hardware-settings select {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            font-size: 0.85rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .hardware-settings select:focus {
+            border-color: var(--primary);
+        }
+
+        .canvas-container {
+            background: #e5e5e5;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+            position: relative;
+            min-height: 160px;
+        }
+
+        /* FLUID RESPONSIVE CANVAS */
+        canvas {
+            display: block;
+            background-color: white;
+            image-rendering: pixelated;
+            cursor: default;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-height: 55vh;
+            /* Prevents canvas from pushing tools off screen */
+            object-fit: contain;
+            /* Keeps aspect ratio pure inside max-height */
+            margin: 0 auto;
+        }
+
+        .text-draggable {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px dashed var(--primary);
+            border-radius: 8px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .drag-handle {
+            padding: 10px;
+            cursor: move;
+            background: #f0f0f0;
+            border-radius: 6px 0 0 6px;
+            font-size: 1.2rem;
+            touch-action: none;
+        }
+
+        .floating-input {
+            width: 120px;
+            border: none;
+            background: transparent;
+            font-size: 24px;
+            font-weight: bold;
+            font-family: sans-serif;
+            padding: 0 8px;
+            outline: none;
+            color: black;
+        }
+
+        .stamp-btn {
+            padding: 10px 14px;
+            cursor: pointer;
+            background: var(--primary);
+            color: white;
+            border-radius: 0 4px 4px 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .stamp-btn:active {
+            background: var(--primary-hover);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            border: none;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:active {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-solid {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .btn-solid:active:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(1px);
+        }
+
+        .btn-solid:disabled {
+            background: #cccccc;
+            border-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-row .btn {
+            margin-bottom: 0;
+        }
+
+        .home-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .home-grid .btn {
+            flex-direction: column;
+            padding: 16px 8px;
+            font-size: 0.95rem;
+            margin-bottom: 0;
+            gap: 6px;
+        }
+
+        .home-grid .btn-icon {
+            font-size: 1.8rem;
+        }
+
+        /* Tablet/Landscape Phone Optimizations */
+        @media (min-width: 600px) {
+            .home-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .id-form-row {
+                align-items: center;
+            }
+        }
+
+        .ui-group {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .ui-group.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .segmented-control {
+            display: flex;
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 12px;
+        }
+
+        .segmented-control label {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .segmented-control input[type="radio"] {
+            display: none;
+        }
+
+        .segmented-control input[type="radio"]:checked+label {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+        }
+
+        .zoom-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid #eaeaea;
+        }
+
+        .zoom-icon {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        .zoom-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            background: #ddd;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .zoom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            justify-content: center;
+        }
+
+        .tool-btn {
+            background: #f0f0f0;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            padding: 0;
+        }
+
+        .tool-btn.active {
+            border-color: var(--primary);
+            background: #e0e0e0;
+            transform: scale(1.05);
+        }
+
+        .tool-btn:active {
+            transform: scale(0.95);
+        }
+
+        .toolbar-divider {
+            width: 2px;
+            background: #eaeaea;
+            margin: 0 4px;
+            border-radius: 1px;
+        }
+
+        .text-input-field {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid #eaeaea;
+            font-size: 1rem;
+            box-sizing: border-box;
+            text-align: left;
+            outline: none;
+            transition: border-color 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .text-input-field:focus {
+            border-color: var(--primary);
+        }
+
+        .id-form-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .id-form-row input:first-child {
+            flex: 1;
+        }
+
+        .id-form-row input:last-child {
+            flex: 2;
+        }
+
+        .status-container {
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            height: 30px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.1s linear;
+        }
+
+        .footer-links {
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+            color: var(--primary);
+        }
+
+        dialog {
+            border: none;
+            border-radius: 16px;
+            padding: 24px;
+            width: 85%;
+            max-width: 320px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            color: var(--text-main);
+            margin: auto;
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+        }
+
+        dialog h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        dialog p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        dialog ul {
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .close-dialog {
+            width: 100%;
+            padding: 12px;
+            background: #f0f0f0;
+            color: black;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .close-dialog:active {
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="header-row">
+            <h2>ePaper Studio</h2>
+            <button id="btnToggleOrientation" class="btn-outline"
+                style="margin: 0; padding: 6px 12px; width: auto; font-size: 0.85rem; border-radius: 8px;">🔄
+                Landscape</button>
+        </div>
+        <p class="subtitle" id="mainSubtitle">by Tech Talkies</p>
+
+        <!-- Hardware Settings Bar -->
+        <div class="hardware-settings">
+            <select id="selDisplaySize">
+                <option value="2.13">2.13" (122x250)</option>
+                <option value="7.5">7.5" (800x480)</option>
+            </select>
+            <select id="selColorMode">
+                <option value="bw">Black & White</option>
+                <option value="gray">Grayscale</option>
+                <option value="color">Full Color</option>
+            </select>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="canvas"></canvas>
+            <div id="textDraggable" class="text-draggable">
+                <div id="dragHandle" class="drag-handle">✥</div>
+                <input type="text" id="floatingTextInput" class="floating-input" placeholder="Type..."
+                    autocomplete="off">
+                <div id="btnStampText" class="stamp-btn">✓</div>
+            </div>
+        </div>
+
+        <!-- STATE 1: Home -->
+        <div id="groupHome" class="ui-group active">
+            <div class="home-grid">
+                <label for="imageInput" class="btn btn-outline">
+                    <span class="btn-icon">📸</span> Image
+                </label>
+                <input type="file" id="imageInput" accept="image/*">
+
+                <button id="btnCreateDesign" class="btn btn-outline">
+                    <span class="btn-icon">✏️</span> Design
+                </button>
+
+                <button id="btnCreateID" class="btn btn-outline">
+                    <span class="btn-icon">🪪</span> ID Card
+                </button>
+
+                <button id="btnCreateQR" class="btn btn-outline">
+                    <span class="btn-icon">🔳</span> QR Code
+                </button>
+            </div>
+        </div>
+
+        <!-- STATE 2: Image Uploaded -->
+        <div id="groupLoaded" class="ui-group">
+            <div class="segmented-control">
+                <input type="radio" id="modeCrop" name="scaleMode" value="crop" checked>
+                <label for="modeCrop">Fill (Crop)</label>
+                <input type="radio" id="modeFit" name="scaleMode" value="fit">
+                <label for="modeFit">Fit (Borders)</label>
+            </div>
+            <div class="zoom-container">
+                <span class="zoom-icon">🔍-</span>
+                <input type="range" id="zoomSlider" class="zoom-slider" min="1" max="3" step="0.05" value="1">
+                <span class="zoom-icon">🔍+</span>
+            </div>
+            <button id="btnConvert" class="btn btn-solid">Convert to ePaper</button>
+            <button class="btn btn-outline btnCancel">Cancel</button>
+        </div>
+
+        <!-- STATE 3: Designer Mode -->
+        <div id="groupDesign" class="ui-group">
+            <div class="toolbar">
+                <button class="tool-btn active" data-tool="pen" title="Draw">✏️</button>
+                <button class="tool-btn" data-tool="eraser" title="Erase">🧽</button>
+                <button class="tool-btn" data-tool="text" title="Add Text">🔤</button>
+                <div class="toolbar-divider"></div>
+                <button class="tool-btn" data-action="undo" title="Undo">↩️</button>
+                <button class="tool-btn" data-action="clear" title="Clear Canvas">🗑️</button>
+            </div>
+            <button id="btnDesignDone" class="btn btn-solid">Done Designing</button>
+            <button class="btn btn-outline btnCancel">Cancel</button>
+        </div>
+
+        <!-- STATE 4: ID Card Generator -->
+        <div id="groupIDCard" class="ui-group">
+            <input type="text" id="idHeader" class="text-input-field" placeholder="Header (e.g. PRESS, STAFF)"
+                autocomplete="off">
+            <label for="idPhotoInput" class="btn btn-outline" style="padding: 10px;">📸 Upload Photo (Optional)</label>
+            <input type="file" id="idPhotoInput" accept="image/*">
+
+            <div class="id-form-row">
+                <input type="text" id="idL1" class="text-input-field" placeholder="Label (Name)" autocomplete="off">
+                <input type="text" id="idV1" class="text-input-field" placeholder="Value (John Doe)" autocomplete="off">
+            </div>
+            <div class="id-form-row">
+                <input type="text" id="idL2" class="text-input-field" placeholder="Label (Role)" autocomplete="off">
+                <input type="text" id="idV2" class="text-input-field" placeholder="Value (Admin)" autocomplete="off">
+            </div>
+            <div class="id-form-row">
+                <input type="text" id="idL3" class="text-input-field" placeholder="Label (ID No.)" autocomplete="off">
+                <input type="text" id="idV3" class="text-input-field" placeholder="Value (849-211)" autocomplete="off">
+            </div>
+
+            <button id="btnPreviewID" class="btn btn-solid">Generate Preview</button>
+            <button id="btnIDDone" class="btn btn-solid" style="display:none;">Continue to Send</button>
+            <button class="btn btn-outline btnCancel">Cancel</button>
+        </div>
+
+        <!-- STATE 5: QR Generator Mode -->
+        <div id="groupQR" class="ui-group">
+            <input type="text" id="qrInput" class="text-input-field" placeholder="Enter URL or Text..."
+                autocomplete="off">
+            <button id="btnGenerateQR" class="btn btn-solid">Preview QR Code</button>
+            <button id="btnQRDone" class="btn btn-solid" style="display: none;">Continue to Send</button>
+            <button class="btn btn-outline btnCancel">Cancel</button>
+        </div>
+
+        <!-- STATE 6: Converted / Ready to Send -->
+        <div id="groupConverted" class="ui-group">
+            <div class="btn-row">
+                <button id="btnSend" class="btn btn-solid">📡 Send</button>
+                <button id="btnInvert" class="btn btn-outline">🌗 Invert</button>
+            </div>
+            <button id="btnRevert" class="btn btn-outline">Back to Edit</button>
+        </div>
+
+        <div class="status-container">
+            <span id="statusText">Ready</span>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="footer-links">
+            <a id="btnHelp">Help</a> &bull; <a id="btnPrivacy">Privacy</a>
+        </div>
+    </div>
+
+    <!-- Help Dialog -->
+    <dialog id="helpDialog">
+        <h3>Hardware Setup</h3>
+        <ul>
+            <li><b>Size & Color:</b> Use the top dropdowns to match your physical e-paper display parameters before
+                designing.</li>
+            <li><b>Orientation:</b> Landscape images are automatically rotated behind the scenes to fit portrait
+                hardware.</li>
+            <li><b>Connection:</b> Keep the keychain powered. Tap "Send" and select <b>Tech_Talkies_ePaper</b>.</li>
+        </ul>
+        <button class="close-dialog" id="closeHelp">Got it</button>
+    </dialog>
+
+    <dialog id="privacyDialog">
+        <h3>Privacy & Security</h3>
+        <p><b>100% Local Processing.</b></p>
+        <p>This web application is completely self-contained. It does <b>not</b> send any of your images, drawings,
+            text, or QR data to any servers or clouds.</p>
+        <button class="close-dialog" id="closePrivacy">Close</button>
+    </dialog>
+
+    <script>
+        // --- HARDWARE STATE ---
+        let baseW = 122;
+        let baseH = 250;
+        let colorMode = 'bw'; // 'bw', 'gray', 'color'
+        let isLandscape = false;
+
+        let CANVAS_W = 122;
+        let CANVAS_H = 250;
+        let displayBuffer = new Uint8Array(0);
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const statusText = document.getElementById('statusText');
+        const mainSubtitle = document.getElementById('mainSubtitle');
+
+        const groupHome = document.getElementById('groupHome');
+        const groupLoaded = document.getElementById('groupLoaded');
+        const groupDesign = document.getElementById('groupDesign');
+        const groupIDCard = document.getElementById('groupIDCard');
+        const groupQR = document.getElementById('groupQR');
+        const groupConverted = document.getElementById('groupConverted');
+
+        const textDraggable = document.getElementById('textDraggable');
+        const dragHandle = document.getElementById('dragHandle');
+        const floatingTextInput = document.getElementById('floatingTextInput');
+        const zoomSlider = document.getElementById('zoomSlider');
+
+        let originalImageData = null;
+        let currentImage = null;
+        let idPhotoImage = null;
+        let workflowSource = 'image';
+        let imgW = 0, imgH = 0, imgOffsetX = 0, imgOffsetY = 0;
+        let undoStack = [];
+        const MAX_UNDO_STEPS = 20;
+
+        // --- HARDWARE SELECTION LOGIC ---
+        document.getElementById('selDisplaySize').addEventListener('change', (e) => {
+            if (e.target.value === '2.13') { baseW = 122; baseH = 250; }
+            if (e.target.value === '7.5') { baseW = 800; baseH = 480; }
+            applyOrientation();
+        });
+
+        document.getElementById('selColorMode').addEventListener('change', (e) => {
+            colorMode = e.target.value;
+            applyOrientation();
+        });
+
+        document.getElementById('btnToggleOrientation').addEventListener('click', (e) => {
+            isLandscape = !isLandscape;
+            e.target.innerText = isLandscape ? "🔄 Portrait" : "🔄 Landscape";
+            applyOrientation();
+        });
+
+        function applyOrientation() {
+            if (isLandscape) {
+                CANVAS_W = Math.max(baseW, baseH);
+                CANVAS_H = Math.min(baseW, baseH);
+            } else {
+                CANVAS_W = Math.min(baseW, baseH);
+                CANVAS_H = Math.max(baseW, baseH);
+            }
+            updateCanvasDimensions();
+            drawHomePlaceholder();
+
+            currentImage = null; idPhotoImage = null; undoStack = [];
+            document.getElementById('imageInput').value = "";
+            setUIState('home');
+        }
+
+        // --- FLUID CANVAS SCALING ---
+        function updateCanvasDimensions() {
+            canvas.width = CANVAS_W;
+            canvas.height = CANVAS_H;
+            // The browser will now fluidly scale the canvas to fill its container 
+            // while maintaining the exact internal mathematical aspect ratio
+            canvas.style.aspectRatio = `${CANVAS_W} / ${CANVAS_H}`;
+        }
+
+        // --- DIALOGS ---
+        const helpDialog = document.getElementById('helpDialog');
+        const privacyDialog = document.getElementById('privacyDialog');
+        document.getElementById('btnHelp').addEventListener('click', (e) => { e.preventDefault(); helpDialog.showModal(); });
+        document.getElementById('closeHelp').addEventListener('click', () => helpDialog.close());
+        document.getElementById('btnPrivacy').addEventListener('click', (e) => { e.preventDefault(); privacyDialog.showModal(); });
+        document.getElementById('closePrivacy').addEventListener('click', () => privacyDialog.close());
+        [helpDialog, privacyDialog].forEach(dialog => {
+            dialog.addEventListener('click', (e) => {
+                const rect = dialog.getBoundingClientRect();
+                if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) dialog.close();
+            });
+        });
+
+        // --- CORE CANVAS SETUP ---
+        function clearCanvas() {
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+        }
+
+        function drawHomePlaceholder() {
+            clearCanvas();
+            ctx.fillStyle = "#cccccc";
+            ctx.font = "bold 18px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${CANVAS_W} x ${CANVAS_H}`, CANVAS_W / 2, CANVAS_H / 2);
+            ctx.font = "12px sans-serif";
+            ctx.fillText(colorMode.toUpperCase(), CANVAS_W / 2, (CANVAS_H / 2) + 24);
+        }
+        drawHomePlaceholder();
+
+        function setUIState(state) {
+            document.querySelectorAll('.ui-group').forEach(el => el.classList.remove('active'));
+            textDraggable.style.display = 'none';
+            document.getElementById('btnIDDone').style.display = 'none';
+            document.getElementById('btnPreviewID').style.display = 'block';
+
+            if (state === 'home') { groupHome.classList.add('active'); mainSubtitle.innerText = "by Tech Talkies"; canvas.style.cursor = 'default'; }
+            if (state === 'loaded') { groupLoaded.classList.add('active'); mainSubtitle.innerText = "Drag and zoom to frame perfectly"; canvas.style.cursor = 'grab'; }
+            if (state === 'design') { groupDesign.classList.add('active'); mainSubtitle.innerText = "Drawing Tool"; document.querySelector('[data-tool="pen"]').click(); canvas.style.cursor = 'crosshair'; }
+            if (state === 'idcard') { groupIDCard.classList.add('active'); mainSubtitle.innerText = "ID Card Generator"; canvas.style.cursor = 'default'; }
+            if (state === 'qr') { groupQR.classList.add('active'); mainSubtitle.innerText = "Generate QR Code"; canvas.style.cursor = 'default'; }
+            if (state === 'converted') { groupConverted.classList.add('active'); mainSubtitle.innerText = "Preview & Send"; canvas.style.cursor = 'default'; }
+        }
+
+        function saveCanvasState() {
+            if (undoStack.length >= MAX_UNDO_STEPS) undoStack.shift();
+            undoStack.push(ctx.getImageData(0, 0, CANVAS_W, CANVAS_H));
+        }
+        function undoLastAction() {
+            if (undoStack.length > 0) {
+                const previousState = undoStack.pop();
+                ctx.putImageData(previousState, 0, 0);
+                statusText.innerText = "Undo successful.";
+            } else { statusText.innerText = "Nothing left to undo!"; }
+        }
+
+        // --- IMAGE LOAD, SCALE, ZOOM & PAN ---
+        function renderImageToCanvas(resetPosition = true, saveFinal = true) {
+            if (!currentImage) return;
+            const mode = document.querySelector('input[name="scaleMode"]:checked').value;
+            clearCanvas();
+
+            let bScale = mode === 'crop'
+                ? Math.max(CANVAS_W / currentImage.width, CANVAS_H / currentImage.height)
+                : Math.min(CANVAS_W / currentImage.width, CANVAS_H / currentImage.height);
+
+            let scale = bScale * parseFloat(zoomSlider.value);
+            imgW = currentImage.width * scale;
+            imgH = currentImage.height * scale;
+
+            if (resetPosition) {
+                imgOffsetX = (CANVAS_W - imgW) / 2;
+                imgOffsetY = (CANVAS_H - imgH) / 2;
+            } else {
+                if (imgW > CANVAS_W) imgOffsetX = Math.max(CANVAS_W - imgW, Math.min(0, imgOffsetX));
+                else imgOffsetX = (CANVAS_W - imgW) / 2;
+                if (imgH > CANVAS_H) imgOffsetY = Math.max(CANVAS_H - imgH, Math.min(0, imgOffsetY));
+                else imgOffsetY = (CANVAS_H - imgH) / 2;
+            }
+
+            ctx.drawImage(currentImage, imgOffsetX, imgOffsetY, imgW, imgH);
+            if (saveFinal) originalImageData = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
+        }
+
+        zoomSlider.addEventListener('input', () => renderImageToCanvas(false, true));
+        document.querySelectorAll('input[name="scaleMode"]').forEach(radio => {
+            radio.addEventListener('change', () => { zoomSlider.value = 1; renderImageToCanvas(true, true); });
+        });
+
+        document.getElementById('imageInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                currentImage = new Image();
+                currentImage.onload = function () {
+                    zoomSlider.value = 1;
+                    renderImageToCanvas(true, true);
+                    setUIState('loaded');
+                    workflowSource = 'image';
+                    statusText.innerText = "Zoom and drag to frame perfectly.";
+                }
+                currentImage.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        // --- DRAGGABLE TEXT LOGIC ---
+        let isDraggingBox = false; let dragOffsetX = 0, dragOffsetY = 0;
+        function startBoxDrag(e) {
+            isDraggingBox = true;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const rect = textDraggable.getBoundingClientRect();
+            dragOffsetX = clientX - rect.left; dragOffsetY = clientY - rect.top;
+            e.preventDefault();
+        }
+        function moveBoxDrag(e) {
+            if (!isDraggingBox) return;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const containerRect = canvas.parentElement.getBoundingClientRect();
+            textDraggable.style.left = (clientX - containerRect.left - dragOffsetX) + 'px';
+            textDraggable.style.top = (clientY - containerRect.top - dragOffsetY) + 'px';
+            e.preventDefault();
+        }
+        function endBoxDrag() { isDraggingBox = false; }
+
+        dragHandle.addEventListener('mousedown', startBoxDrag);
+        document.addEventListener('mousemove', moveBoxDrag);
+        document.addEventListener('mouseup', endBoxDrag);
+        dragHandle.addEventListener('touchstart', startBoxDrag, { passive: false });
+        document.addEventListener('touchmove', moveBoxDrag, { passive: false });
+        document.addEventListener('touchend', endBoxDrag);
+
+        document.getElementById('btnStampText').addEventListener('click', () => {
+            const text = floatingTextInput.value.trim();
+            if (!text) return;
+            saveCanvasState();
+            ctx.fillStyle = colorMode === 'bw' ? 'black' : '#000000';
+            ctx.font = `bold ${Math.round(CANVAS_W * 0.1)}px sans-serif`;
+            ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+
+            // Dynamic Math: Converts screen pixels to internal canvas coordinates seamlessly
+            const x = (textDraggable.offsetLeft + floatingTextInput.offsetLeft - canvas.offsetLeft) * (CANVAS_W / canvas.offsetWidth);
+            const y = (textDraggable.offsetTop + floatingTextInput.offsetTop + (floatingTextInput.offsetHeight / 2) - canvas.offsetTop) * (CANVAS_H / canvas.offsetHeight);
+
+            ctx.fillText(text, x, y);
+            floatingTextInput.value = '';
+            statusText.innerText = "Text stamped!";
+        });
+
+        // --- DYNAMIC ID CARD GENERATOR ---
+        document.getElementById('btnCreateID').addEventListener('click', () => {
+            clearCanvas(); idPhotoImage = null; document.getElementById('idPhotoInput').value = "";
+            setUIState('idcard'); statusText.innerText = "Fill out the fields to generate an ID.";
+        });
+
+        document.getElementById('idPhotoInput').addEventListener('change', function (e) {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                idPhotoImage = new Image();
+                idPhotoImage.onload = function () { statusText.innerText = "Photo loaded. Generate preview."; }
+                idPhotoImage.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('btnPreviewID').addEventListener('click', () => {
+            clearCanvas();
+
+            const headerH = Math.round(CANVAS_H * 0.12);
+            const photoW = Math.round(CANVAS_W * 0.35);
+            const photoH = Math.round(CANVAS_H * 0.25);
+            const padding = Math.round(CANVAS_W * 0.08);
+
+            let textX = padding;
+            let maxTextWidth = CANVAS_W - (padding * 2);
+
+            // 1. Header
+            const headerText = document.getElementById('idHeader').value.trim() || "ID CARD";
+            ctx.fillStyle = 'black'; ctx.fillRect(0, 0, CANVAS_W, headerH);
+            ctx.fillStyle = 'white'; ctx.font = `bold ${Math.round(headerH * 0.6)}px sans-serif`;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(headerText.toUpperCase(), CANVAS_W / 2, headerH / 2, CANVAS_W - 10);
+
+            // 2. Photo
+            if (idPhotoImage) {
+                ctx.drawImage(idPhotoImage, padding, headerH + padding, photoW, photoH);
+                if (colorMode === 'bw') {
+                    originalImageData = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
+                    processCanvas(true);
+                }
+                textX = padding + photoW + padding;
+                maxTextWidth = CANVAS_W - textX - padding;
+            }
+
+            // 3. Text
+            ctx.fillStyle = 'black'; ctx.textAlign = 'left';
+            const rows = [
+                { l: document.getElementById('idL1').value.trim(), v: document.getElementById('idV1').value.trim() },
+                { l: document.getElementById('idL2').value.trim(), v: document.getElementById('idV2').value.trim() },
+                { l: document.getElementById('idL3').value.trim(), v: document.getElementById('idV3').value.trim() }
+            ].filter(r => r.l || r.v);
+
+            let startY = headerH + padding;
+            let spacing = Math.round(CANVAS_H * 0.15);
+
+            if (!idPhotoImage && rows.length <= 2) startY = headerH + (CANVAS_H * 0.15);
+
+            const labelFont = Math.max(10, Math.round(CANVAS_H * 0.04));
+            const valueFont = Math.max(14, Math.round(CANVAS_H * 0.07));
+
+            rows.forEach((row, index) => {
+                let y = startY + (index * spacing);
+                ctx.textBaseline = 'top';
+                ctx.font = `bold ${labelFont}px sans-serif`;
+                ctx.fillText(row.l.toUpperCase(), textX, y);
+                ctx.font = `bold ${valueFont}px sans-serif`;
+                ctx.fillText(row.v, textX, y + labelFont + 4, maxTextWidth);
+            });
+
+            // 4. Footer
+            ctx.fillStyle = 'black'; ctx.fillRect(0, CANVAS_H - (CANVAS_H * 0.02), CANVAS_W, Math.max(4, CANVAS_H * 0.02));
+
+            originalImageData = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
+            document.getElementById('btnPreviewID').style.display = 'none';
+            document.getElementById('btnIDDone').style.display = 'block';
+            statusText.innerText = "ID Card Generated!";
+        });
+
+        document.getElementById('btnIDDone').addEventListener('click', () => {
+            workflowSource = 'idcard';
+            processCanvas(false);
+            setUIState('converted');
+        });
+
+
+        // --- DEDICATED QR GENERATOR ---
+        document.getElementById('btnCreateQR').addEventListener('click', () => {
+            clearCanvas(); document.getElementById('qrInput').value = "";
+            document.getElementById('btnGenerateQR').style.display = "block";
+            document.getElementById('btnQRDone').style.display = "none";
+            setUIState('qr'); statusText.innerText = "Enter text/URL to generate a QR code.";
+        });
+
+        document.getElementById('btnGenerateQR').addEventListener('click', () => {
+            const val = document.getElementById('qrInput').value.trim();
+            if (!val) { statusText.innerText = "Please enter a URL or text."; return; }
+            clearCanvas();
+
+            const qrSize = Math.round(Math.min(CANVAS_W, CANVAS_H) * 0.85);
+            const qr = new QRious({ value: val, size: qrSize, level: 'M' });
+            const qrImg = new Image();
+            qrImg.onload = () => {
+                const qrX = (CANVAS_W - qrSize) / 2;
+                const qrY = (CANVAS_H - qrSize) / 2;
+                ctx.drawImage(qrImg, qrX, qrY);
+                originalImageData = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
+                document.getElementById('btnGenerateQR').style.display = "none";
+                document.getElementById('btnQRDone').style.display = "block";
+                statusText.innerText = "QR Code generated!";
+            };
+            qrImg.src = qr.toDataURL();
+        });
+
+        document.getElementById('btnQRDone').addEventListener('click', () => {
+            workflowSource = 'qr';
+            processCanvas(false);
+            setUIState('converted');
+        });
+
+
+        // --- DESIGNER DRAWING LOGIC ---
+        let isDrawing = false; let isDraggingImage = false;
+        let dragStartX = 0, dragStartY = 0; let currentTool = 'pen';
+
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const action = e.currentTarget.getAttribute('data-action');
+                if (action === 'undo') return undoLastAction();
+                if (action === 'clear') { saveCanvasState(); clearCanvas(); statusText.innerText = "Canvas cleared."; return; }
+
+                const tool = e.currentTarget.getAttribute('data-tool');
+                if (!tool) return;
+
+                document.querySelectorAll('.tool-btn[data-tool]').forEach(b => b.classList.remove('active'));
+                e.currentTarget.classList.add('active'); currentTool = tool;
+                textDraggable.style.display = 'none';
+
+                if (tool === 'text') {
+                    textDraggable.style.display = 'flex'; floatingTextInput.focus();
+                    statusText.innerText = "Type, drag the handle, and tap (✓) to stamp.";
+                } else { statusText.innerText = "Drawing mode active."; }
+            });
+        });
+
+        function getCanvasPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * (CANVAS_W / rect.width),
+                y: (clientY - rect.top) * (CANVAS_H / rect.height)
+            };
+        }
+
+        function startInteraction(e) {
+            if (groupLoaded.classList.contains('active')) {
+                if (imgW > CANVAS_W || imgH > CANVAS_H) {
+                    isDraggingImage = true; canvas.style.cursor = 'grabbing';
+                    const pos = getCanvasPos(e);
+                    dragStartX = pos.x - imgOffsetX; dragStartY = pos.y - imgOffsetY;
+                }
+                e.preventDefault(); return;
+            }
+            if (!groupDesign.classList.contains('active') || currentTool === 'text') return;
+            e.preventDefault(); saveCanvasState();
+            isDrawing = true; const pos = getCanvasPos(e);
+            ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
+            ctx.lineWidth = Math.max(4, Math.round(CANVAS_W * 0.02));
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = currentTool === 'eraser' ? 'white' : (colorMode === 'bw' ? 'black' : '#000');
+            ctx.lineTo(pos.x, pos.y + 0.1); ctx.stroke();
+        }
+
+        function moveInteraction(e) {
+            if (isDraggingImage && groupLoaded.classList.contains('active')) {
+                const pos = getCanvasPos(e);
+                imgOffsetX = pos.x - dragStartX; imgOffsetY = pos.y - dragStartY;
+                renderImageToCanvas(false, false);
+                e.preventDefault(); return;
+            }
+            if (!isDrawing || !groupDesign.classList.contains('active') || currentTool === 'text') return;
+            e.preventDefault(); const pos = getCanvasPos(e);
+            ctx.lineTo(pos.x, pos.y); ctx.stroke();
+        }
+
+        function stopInteraction(e) {
+            if (isDraggingImage) {
+                isDraggingImage = false; canvas.style.cursor = 'grab';
+                originalImageData = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
+                e.preventDefault(); return;
+            }
+            if (!groupDesign.classList.contains('active') || currentTool === 'text') return;
+            e.preventDefault(); isDrawing = false; ctx.closePath();
+        }
+
+        canvas.addEventListener('mousedown', startInteraction); canvas.addEventListener('mousemove', moveInteraction);
+        canvas.addEventListener('mouseup', stopInteraction); canvas.addEventListener('mouseleave', stopInteraction);
+        canvas.addEventListener('touchstart', startInteraction, { passive: false });
+        canvas.addEventListener('touchmove', moveInteraction, { passive: false });
+        canvas.addEventListener('touchend', stopInteraction, { passive: false });
+
+        // --- CONVERSION & HARDWARE BUFFER PACKING ---
+        document.getElementById('btnDesignDone').addEventListener('click', () => {
+            workflowSource = 'design';
+            originalImageData = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
+            processCanvas(false);
+            setUIState('converted');
+        });
+
+        document.getElementById('btnConvert').addEventListener('click', () => {
+            processCanvas(true);
+            setUIState('converted');
+        });
+
+        function generateESP32Buffer() {
+            let hardwareW = baseW;
+            let hardwareH = baseH;
+
+            let exportCanvas = document.createElement('canvas');
+            exportCanvas.width = hardwareW;
+            exportCanvas.height = hardwareH;
+            let eCtx = exportCanvas.getContext('2d');
+
+            if (isLandscape && baseW < baseH) {
+                eCtx.translate(hardwareW / 2, hardwareH / 2);
+                eCtx.rotate(Math.PI / 2);
+                eCtx.drawImage(canvas, -hardwareH / 2, -hardwareW / 2);
+            } else if (!isLandscape && baseW > baseH) {
+                eCtx.translate(hardwareW / 2, hardwareH / 2);
+                eCtx.rotate(-Math.PI / 2);
+                eCtx.drawImage(canvas, -hardwareH / 2, -hardwareW / 2);
+            } else {
+                eCtx.drawImage(canvas, 0, 0);
+            }
+
+            let imgData = eCtx.getImageData(0, 0, hardwareW, hardwareH);
+            let data = imgData.data;
+
+            if (colorMode === 'bw') {
+                let rowBytes = Math.ceil(hardwareW / 8);
+                displayBuffer = new Uint8Array(rowBytes * hardwareH);
+                displayBuffer.fill(0);
+
+                for (let y = 0; y < hardwareH; y++) {
+                    for (let x = 0; x < hardwareW; x++) {
+                        let idx = (y * hardwareW + x) * 4;
+                        let isBlack = data[idx] < 128;
+                        if (isBlack) {
+                            let byteIndex = Math.floor(x / 8) + (y * rowBytes);
+                            let bitIndex = x % 8;
+                            displayBuffer[byteIndex] |= (0x80 >> bitIndex);
+                        }
+                    }
+                }
+            } else if (colorMode === 'gray') {
+                displayBuffer = new Uint8Array(hardwareW * hardwareH);
+                for (let i = 0; i < hardwareW * hardwareH; i++) {
+                    let r = data[i * 4], g = data[i * 4 + 1], b = data[i * 4 + 2];
+                    displayBuffer[i] = Math.round(r * 0.299 + g * 0.587 + b * 0.114);
+                }
+            } else if (colorMode === 'color') {
+                displayBuffer = new Uint8Array(hardwareW * hardwareH * 2);
+                for (let i = 0; i < hardwareW * hardwareH; i++) {
+                    let r = data[i * 4], g = data[i * 4 + 1], b = data[i * 4 + 2];
+                    let rgb565 = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+                    displayBuffer[i * 2] = (rgb565 >> 8) & 0xFF;
+                    displayBuffer[i * 2 + 1] = rgb565 & 0xFF;
+                }
+            }
+        }
+
+        function processCanvas(applyDither) {
+            let imgData = new ImageData(
+                new Uint8ClampedArray(originalImageData.data),
+                originalImageData.width, originalImageData.height
+            );
+            let data = imgData.data;
+
+            if (colorMode === 'bw') {
+                for (let i = 0; i < data.length; i += 4) {
+                    let gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+                    data[i] = data[i + 1] = data[i + 2] = gray;
+                }
+                for (let y = 0; y < CANVAS_H; y++) {
+                    for (let x = 0; x < CANVAS_W; x++) {
+                        let idx = (y * CANVAS_W + x) * 4;
+                        let oldPixel = data[idx];
+                        let newPixel = oldPixel < 128 ? 0 : 255;
+                        data[idx] = data[idx + 1] = data[idx + 2] = newPixel;
+
+                        if (applyDither) {
+                            let error = oldPixel - newPixel;
+                            let distribute = (errVal, offsetX, offsetY) => {
+                                if (x + offsetX >= 0 && x + offsetX < CANVAS_W && y + offsetY >= 0 && y + offsetY < CANVAS_H) {
+                                    let nIdx = ((y + offsetY) * CANVAS_W + (x + offsetX)) * 4;
+                                    let val = data[nIdx] + errVal;
+                                    data[nIdx] = data[nIdx + 1] = data[nIdx + 2] = Math.min(255, Math.max(0, val));
+                                }
+                            };
+                            distribute(error * 7 / 16, 1, 0);
+                            distribute(error * 3 / 16, -1, 1);
+                            distribute(error * 5 / 16, 0, 1);
+                            distribute(error * 1 / 16, 1, 1);
+                        }
+                    }
+                }
+            } else if (colorMode === 'gray') {
+                for (let i = 0; i < data.length; i += 4) {
+                    let gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+                    data[i] = data[i + 1] = data[i + 2] = gray;
+                }
+            }
+
+            ctx.putImageData(imgData, 0, 0);
+            generateESP32Buffer();
+        }
+
+        // --- GLOBAL BUTTON ROUTING ---
+        document.getElementById('btnCreateDesign').addEventListener('click', () => {
+            undoStack = []; clearCanvas(); setUIState('design');
+        });
+
+        document.querySelectorAll('.btnCancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentImage = null; document.getElementById('imageInput').value = "";
+                drawHomePlaceholder(); setUIState('home'); statusText.innerText = "Ready";
+            });
+        });
+
+        document.getElementById('btnRevert').addEventListener('click', () => {
+            ctx.putImageData(originalImageData, 0, 0);
+            if (workflowSource === 'image') { setUIState('loaded'); statusText.innerText = "Reverted."; }
+            else if (workflowSource === 'design') { setUIState('design'); statusText.innerText = "Back to drawing."; }
+            else if (workflowSource === 'qr') { setUIState('qr'); statusText.innerText = "Generate a new QR code."; }
+            else if (workflowSource === 'idcard') {
+                setUIState('idcard');
+                document.getElementById('btnPreviewID').style.display = 'none';
+                document.getElementById('btnIDDone').style.display = 'block';
+                statusText.innerText = "Edit fields and Preview again.";
+            }
+        });
+
+        document.getElementById('btnInvert').addEventListener('click', () => {
+            let imgData = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
+            let data = imgData.data;
+
+            if (workflowSource === 'qr') statusText.innerText = "Warning: Inverted QR codes may not scan!";
+            else statusText.innerText = "Colors inverted.";
+
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = 255 - data[i];
+                data[i + 1] = 255 - data[i + 1];
+                data[i + 2] = 255 - data[i + 2];
+            }
+            ctx.putImageData(imgData, 0, 0);
+            generateESP32Buffer();
+        });
+
+        // --- BLE TRANSMISSION LOGIC ---
+        document.getElementById('btnSend').addEventListener('click', async () => {
+            const btnSend = document.getElementById('btnSend');
+            const btnInvert = document.getElementById('btnInvert');
+            const btnRevert = document.getElementById('btnRevert');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+
+            try {
+                statusText.innerText = "Pairing with Keychain...";
+                progressBar.style.display = "block";
+                progressFill.style.width = "0%";
+                btnSend.disabled = btnInvert.disabled = btnRevert.disabled = true;
+
+                const device = await navigator.bluetooth.requestDevice({
+                    filters: [{ name: 'Tech_Talkies_ePaper' }],
+                    optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
+                });
+
+                statusText.innerText = "Connecting to device...";
+                const server = await device.gatt.connect();
+                const service = await server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
+                const characteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
+
+                statusText.innerText = "Uploading to display...";
+                const CHUNK_SIZE = 200;
+
+                for (let i = 0; i < displayBuffer.length; i += CHUNK_SIZE) {
+                    const chunk = displayBuffer.slice(i, i + CHUNK_SIZE);
+                    await characteristic.writeValue(chunk);
+
+                    const percent = Math.round(((i + CHUNK_SIZE) / displayBuffer.length) * 100);
+                    progressFill.style.width = percent + "%";
+                }
+
+                statusText.innerText = "Upload Complete! Disconnecting...";
+                device.gatt.disconnect();
+
+                setTimeout(() => {
+                    statusText.innerText = "Screen updated! You can now unplug the keychain.";
+                    progressBar.style.display = "none";
+                    btnSend.disabled = btnInvert.disabled = btnRevert.disabled = false;
+                }, 1500);
+
+            } catch (error) {
+                statusText.innerText = "Error: " + error.message;
+                progressBar.style.display = "none";
+                btnSend.disabled = btnInvert.disabled = btnRevert.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>
