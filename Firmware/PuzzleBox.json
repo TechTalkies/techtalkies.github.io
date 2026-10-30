@@ -1,0 +1,23 @@
+{
+  "name": "Minimal Puzzle Box",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "PuzzleBox.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32S3",
+      "parts": [
+        { "path": "PuzzleBox.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "PuzzleBox.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
