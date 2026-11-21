@@ -1,0 +1,41 @@
+{
+  "name": "Matrix Keychain",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "MatrixKeychainS3.bin",
+          "offset": 0
+        }
+      ]
+    },
+    {
+      "chipFamily": "ESP32S3",
+      "parts": [
+        {
+          "path": "MatrixKeychainS3.bin",
+          "offset": 0
+        }
+      ]
+    },
+    {
+      "chipFamily": "ESP32-C3",
+      "parts": [
+        {
+          "path": "MatrixKeychainC3.bin",
+          "offset": 0
+        }
+      ]
+    },
+    {
+      "chipFamily": "ESP32C3",
+      "parts": [
+        {
+          "path": "MatrixKeychainC3.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}
